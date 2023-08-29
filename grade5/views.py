@@ -9,6 +9,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 
+class ModuleNotCompletedException(Exception):
+    pass
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -89,24 +92,72 @@ def update_progress_of_content(request, module_id, content_type):
 
     return Response({"status": f"{content_type} marked as completed"}, status=200)
 
-@api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def is_module_completed(request, module_id):
-    module = get_object_or_404(Module, id=module_id, user=request.user)
+def _is_module_completed(module):
     content = module.content
 
     if content.text and not content.text.is_completed:
-        return Response({"status": "Module not completed, text content pending"}, status=200)
+        raise ModuleNotCompletedException("Module not completed, text content pending")
 
     if content.image and not content.image.is_completed:
-        return Response({"status": "Module not completed, image content pending"}, status=200)
+        raise ModuleNotCompletedException("Module not completed, image content pending")
 
     if content.video and not content.video.is_completed:
-        return Response({"status": "Module not completed, video content pending"}, status=200)
+        raise ModuleNotCompletedException("Module not completed, video content pending")
 
-    if content.mcq and not content.mcq_set.is_completed:
-        return Response({"status": "Module not completed, MCQ content pending"}, status=200)
+    if content.mcq_set and not content.mcq_set.is_completed:
+        raise ModuleNotCompletedException("Module not completed, MCQ content pending")
 
-    return Response({"status": "Module is completed"}, status=200)
+    return True
     
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_module_progress(request, module_id):
+    module = get_object_or_404(Module, id=module_id, user=request.user)
+    
+    try:
+        if _is_module_completed(module):
+            module.is_completed = True
+            module.save()
+            return Response({"status": "Module is completed"}, status=200)
+    except ModuleNotCompletedException as e:
+        return Response({"status": str(e)}, status=400)
+
+def _is_chapter_completed(chapter):
+    modules = Module.objects.filter(chapter=chapter)
+    for module in modules:
+        if not _is_module_completed(module):
+            return False
+    return True
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_chapter_progress(request, chapter_id):
+    chapter = get_object_or_404(Chapter, id=chapter_id, user=request.user)
+    if _is_chapter_completed(chapter):
+        chapter.is_completed = True
+        chapter.save()
+        return Response({"status": "Chapter is completed"}, status=200)
+    else:
+        return Response({"status": "Chapter is not completed"}, status=400)
+
+def _is_subject_completed(subject):
+    chapters = Chapter.objects.filter(subject=subject)
+    for chapter in chapters:
+        if not _is_chapter_completed(chapter):
+            return False
+    return True
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_subject_progress(request, subject_id):
+    subject = get_object_or_404(Subject, id=subject_id, user=request.user)
+    if _is_subject_completed(subject):
+        subject.is_completed = True
+        subject.save()
+        return Response({"status": "Subject is completed"}, status=200)
+    else:
+        return Response({"status": "Subject is not completed"}, status=400)
+
