@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Subject, Chapter, Module, MCQ, TextField, ImageField, VideoField, Content
+from .models import Subject, Chapter, Module, MCQ, TextField, ImageField, VideoField, Content, MCQSet
 
 class MCQSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,3 +35,11 @@ class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = ['id', 'name']
+
+class MCQSetSerializer(serializers.ModelSerializer):
+    questions = MCQSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = MCQSet
+        fields = ['id', 'questions', 'is_completed']
+

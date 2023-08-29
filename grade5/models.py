@@ -1,4 +1,6 @@
+from tkinter.tix import Tree
 from django.db import models
+from django.contrib.postgres.fields import JSONField  # You can also import from django.db.models if you're using Django 3.1+
 
 # Subject model
 class Subject(models.Model):
@@ -17,13 +19,20 @@ class TextField(models.Model):
 
 # ImageField model
 class ImageField(models.Model):
-    image = models.URLField(blank=True, null=True)
+    image = models.JSONField(blank=True, null=True)
     is_completed = models.BooleanField(default=False)
 
 # VideoField model
 class VideoField(models.Model):
     video = models.URLField(blank=True, null=True)
     is_completed = models.BooleanField(default=False)
+
+# MCQSet model
+class MCQSet(models.Model):
+    is_completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"MCQ Set {self.id}"
 
 # MCQ model
 class MCQ(models.Model):
@@ -33,7 +42,7 @@ class MCQ(models.Model):
     choice3 = models.CharField(max_length=255)
     choice4 = models.CharField(max_length=255)
     correct_choice = models.IntegerField()  # 1, 2, 3, or 4
-    is_completed = models.BooleanField(default=False)
+    mcq_set = models.ForeignKey(MCQSet, related_name='questions', null=True, on_delete=models.CASCADE)
 
 # Content model
 class Content(models.Model):
@@ -47,7 +56,7 @@ class Content(models.Model):
     text = models.OneToOneField(TextField, null=True, blank=True, on_delete=models.CASCADE)
     image = models.OneToOneField(ImageField, null=True, blank=True, on_delete=models.CASCADE)
     video = models.OneToOneField(VideoField, null=True, blank=True, on_delete=models.CASCADE)
-    mcq = models.OneToOneField(MCQ, null=True, blank=True, on_delete=models.CASCADE)
+    mcq_set = models.OneToOneField(MCQSet, null=True, blank=True, on_delete=models.CASCADE) 
 
 # Module model
 class Module(models.Model):
