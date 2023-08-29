@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "grade5",
-    "rest_framework.authtoken"
+    "rest_framework.authtoken",
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -121,7 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
-
+STATIC_ROOT = "static/"
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -133,3 +135,19 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # firebase setup
 # cred = credentials.Certificate("path/to/firebaseConfig.json")
 # firebase_admin.initialize_app(cred)
+CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ORIGIN = [
+#       # Add any other allowed origins here
+# ]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'access-control-allow-origin',  # Add this header to the list
+    # Add any other necessary headers
+]

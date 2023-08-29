@@ -12,11 +12,11 @@ RUN pip install -r requirements.txt
 
 # Install gunicorn
 RUN pip install gunicorn
-
+ 
 # If you have static files or database migrations, you can add them here.
 # Example:
 RUN python manage.py collectstatic --noinput
 RUN python manage.py migrate
 
 # Set environment variables
-ENV DJANGO_SETTINGS_MODULE approval_system.settings
+ENV DJANGO_SETTINGS_MODULE backend.settings
