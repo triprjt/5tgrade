@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
+from django.contrib.auth.models import User
 from faker import Faker
-from grade5.models import Subject, Chapter, Module, TextField, ImageField, VideoField, MCQ, Content, MCQSet  # Assuming MCQSet is the model to hold a set of MCQs
+from grade5.models import Subject, Chapter, Module, TextField, ImageField, VideoField, MCQ, Content, MCQSet  # Replace 'your_app_name' with the actual app name
 
 class Command(BaseCommand):
     help = 'Populates the database with fake data for testing.'
@@ -8,49 +9,55 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         fake = Faker()
 
-        # Create subjects
-        subject_names = ['phy', 'math', 'chem', 'bio']
-        for name in subject_names:
-            Subject.objects.create(name=name)
+        # Create users
+        user_list = [
+            {'username': 'Alice', 'password': '1234'},
+            {'username': 'Bob', 'password': '1234'},
+            {'username': 'Bill', 'password': '1234'},
+        ]
 
-        # Create chapters for each subject
-        for subject in Subject.objects.all():
-            for i in range(1, 11):
-                Chapter.objects.create(name=f'Chapter {i}', subject=subject)
+        for user_data in user_list:
+            user = User.objects.create_user(username=user_data['username'], password=user_data['password'])
 
-        for chapter in Chapter.objects.all():
-            for i in range(1, 11):
-                # Create text, image, and video content
-                text_content = TextField.objects.create(text=fake.paragraph(nb_sentences=5))
-                image_content = ImageField.objects.create(
-                    image=[fake.image_url() for _ in range(4)]
-                )
-                video_content = VideoField.objects.create(video=fake.url())
+            # Create subjects for each user
+            subject_names = ['phy', 'math', 'chem', 'bio']
+            for name in subject_names:
+                Subject.objects.create(name=name, user=user)
 
-                # # Create a set of MCQs
-                # mcq_set = MCQSet.objects.create()  # Assuming you have an MCQSet model
+            # Create chapters for each subject of the user
+            for subject in Subject.objects.filter(user=user):
+                for i in range(1, 11):
+                    Chapter.objects.create(name=f'Chapter {i}', subject=subject)
 
-                # # Create MCQs and link them to the MCQSet
-                # for _ in range(3):  # 3 MCQs per module
-                #     mcq_content = MCQ.objects.create(
-                #         question_title=fake.sentence(),
-                #         choice1=fake.word(),
-                #         choice2=fake.word(),
-                #         choice3=fake.word(),
-                #         choice4=fake.word(),
-                #         correct_choice=fake.random_int(min=1, max=4),
-                #         mcq_set=mcq_set  # Linking the MCQ to the MCQSet
-                #     )
-                    
-                # Create a Content object linking to text, image, video, and MCQSet
-                content_obj = Content.objects.create(
-                    text=text_content,
-                    image=image_content,
-                    video=video_content,
-                    # mcq=mcq_set  # Linking the MCQSet to the content
-                )
+                    # Create modules for each chapter of the user
+                    for chapter in Chapter.objects.filter(subject=subject):
+                        for i in range(1, 11):
+                            text_content = TextField.objects.create(text=fake.paragraph(nb_sentences=5))
+                            image_content = ImageField.objects.create(
+                                image=[fake.image_url() for _ in range(4)]
+                            )
+                            video_content = VideoField.objects.create(video=fake.url())
 
-                # Create a Module linking to the content
-                Module.objects.create(name=f'Module {i}', chapter=chapter, content=content_obj)
+                            mcq_set = MCQSet.objects.create()
+
+                            for _ in range(3):
+                                MCQ.objects.create(
+                                    question_title=fake.sentence(),
+                                    choice1=fake.word(),
+                                    choice2=fake.word(),
+                                    choice3=fake.word(),
+                                    choice4=fake.word(),
+                                    correct_choice=fake.random_int(min=1, max=4),
+                                    mcq_set=mcq_set
+                                )
+
+                            content_obj = Content.objects.create(
+                                text=text_content,
+                                image=image_content,
+                                video=video_content,
+                                mcq_set=mcq_set
+                            )
+
+                            Module.objects.create(name=f'Module {i}', chapter=chapter, content=content_obj)
 
         self.stdout.write(self.style.SUCCESS('Database populated successfully!'))

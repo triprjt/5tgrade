@@ -1,35 +1,45 @@
 from tkinter.tix import Tree
 from django.db import models
 from django.contrib.postgres.fields import JSONField  # You can also import from django.db.models if you're using Django 3.1+
+from django.contrib.auth.models import User
 
 # Subject model
+
 class Subject(models.Model):
     name = models.CharField(max_length=100)
+    is_completed = models.BooleanField(default=False)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+
 
 # Chapter model
 class Chapter(models.Model):
     subject = models.ForeignKey(Subject, related_name='chapters', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     is_completed = models.BooleanField(default=False)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)  # <-- Add this field
 
 # TextField model
 class TextField(models.Model):
     text = models.TextField(default="")
     is_completed = models.BooleanField(default=False)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)  # <-- Add this field
 
 # ImageField model
 class ImageField(models.Model):
     image = models.JSONField(blank=True, null=True)
     is_completed = models.BooleanField(default=False)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)  # <-- Add this field
 
 # VideoField model
 class VideoField(models.Model):
     video = models.URLField(blank=True, null=True)
     is_completed = models.BooleanField(default=False)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)  # <-- Add this field
 
 # MCQSet model
 class MCQSet(models.Model):
     is_completed = models.BooleanField(default=False)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)  # <-- Add this field
 
     def __str__(self):
         return f"MCQ Set {self.id}"
@@ -63,3 +73,6 @@ class Module(models.Model):
     chapter = models.ForeignKey(Chapter, related_name='modules', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     content = models.ForeignKey(Content, related_name="modules", on_delete=models.CASCADE)
+    is_completed = models.BooleanField(default=False)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)  # <-- Add this field
+    

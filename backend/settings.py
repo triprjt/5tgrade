@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "grade5",
+    "rest_framework.authtoken"
 ]
 
 MIDDLEWARE = [
