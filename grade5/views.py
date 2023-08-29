@@ -36,27 +36,29 @@ def getModulesInAChapter(request, chapter_id):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def get_content_in_module(request, module_id, content_type):
+def get_content_in_module(request, module_id):
     module = get_object_or_404(Module, id=module_id, user=request.user)
     content = module.content
+    content_list = []
 
-    if content_type.upper() == 'TEXT':
-        serializer = TextFieldSerializer(content.text)
+    if content.text:
+        text_serializer = TextFieldSerializer(content.text)
+        content_list.append({'type': 'text', 'body': text_serializer.data})
 
-    elif content_type.upper() == 'IMAGE':
-        serializer = ImageFieldSerializer(content.image)
+    if content.image:
+        image_serializer = ImageFieldSerializer(content.image)
+        content_list.append({'type': 'image', 'body': image_serializer.data})
 
-    elif content_type.upper() == 'VIDEO':
-        serializer = VideoFieldSerializer(content.video)
+    if content.video:
+        video_serializer = VideoFieldSerializer(content.video)
+        content_list.append({'type': 'video', 'body': video_serializer.data})
 
-    elif content_type.upper() == 'MCQ':
+    if content.mcq_set:
         mcq_set = get_object_or_404(MCQSet, id=content.mcq_set.id)
-        serializer = MCQSetSerializer(mcq_set)
+        mcq_serializer = MCQSetSerializer(mcq_set)
+        content_list.append({'type': 'mcq', 'body': mcq_serializer.data})
 
-    else:
-        return Response({"status": "Invalid content type"}, status=400)
-
-    return Response(serializer.data)
+    return Response(content_list)
 
 
 @api_view(['PUT'])
