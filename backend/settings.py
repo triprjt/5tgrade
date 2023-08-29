@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-8r4ej-=1_7hnu$m&@lb1mp3(8rt9#nie*qaxr!87d9o1va1=@o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -136,18 +136,18 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # cred = credentials.Certificate("path/to/firebaseConfig.json")
 # firebase_admin.initialize_app(cred)
 CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOW_ORIGIN = [
-#       # Add any other allowed origins here
-# ]
-
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'access-control-allow-origin',  # Add this header to the list
-    # Add any other necessary headers
+CORS_ALLOW_ORIGINS = [
+    '*'
+      # Add any other allowed origins here
 ]
+
+CORS_ALLOW_HEADERS = ['*']
+    # 'accept',
+    # 'accept-encoding',
+    # 'authorization',
+    # 'content-type',
+    # 'dnt',
+    # 'origin',
+    # 'user-agent',
+    # 'access-control-allow-origin',  # Add this header to the list
+    # # Add any other necessary headers
