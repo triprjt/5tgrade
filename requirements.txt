@@ -7,6 +7,7 @@ cffi==1.15.1
 charset-normalizer==3.2.0
 cryptography==41.0.3
 Django==4.2.4
+django-cors-headers==4.2.0
 djangorestframework==3.14.0
 Faker==19.3.1
 firebase-admin==6.2.0
@@ -22,9 +23,11 @@ google-resumable-media==2.5.0
 googleapis-common-protos==1.60.0
 grpcio==1.57.0
 grpcio-status==1.57.0
+gunicorn==21.2.0
 httplib2==0.22.0
 idna==3.4
 msgpack==1.0.5
+packaging==23.1
 Pillow==10.0.0
 proto-plus==1.22.3
 protobuf==4.24.2
@@ -43,4 +46,3 @@ sqlparse==0.4.4
 typing_extensions==4.7.1
 uritemplate==4.1.1
 urllib3==1.26.16
-django-cors-headers

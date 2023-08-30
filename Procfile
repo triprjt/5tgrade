@@ -1,1 +1,1 @@
- web: gunicorn 'grade5.wsgi'
+web: gunicorn 'grade5.wsgi'
