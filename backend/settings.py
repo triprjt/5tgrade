@@ -28,8 +28,7 @@ SECRET_KEY = "django-insecure-8r4ej-=1_7hnu$m&@lb1mp3(8rt9#nie*qaxr!87d9o1va1=@o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 
@@ -46,15 +45,16 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware'
+    'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = "backend.urls"
 
@@ -128,26 +128,16 @@ STATIC_ROOT = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+                ],
+}
 
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-
-# firebase setup
-# cred = credentials.Certificate("path/to/firebaseConfig.json")
-# firebase_admin.initialize_app(cred)
-CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_ORIGINS = [
-    '*'
-      # Add any other allowed origins here
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000"
 ]
 
-CORS_ALLOW_HEADERS = ['*']
-    # 'accept',
-    # 'accept-encoding',
-    # 'authorization',
-    # 'content-type',
-    # 'dnt',
-    # 'origin',
-    # 'user-agent',
-    # 'access-control-allow-origin',  # Add this header to the list
-    # # Add any other necessary headers
+# Access-Control-Allow-Origin = ['*']

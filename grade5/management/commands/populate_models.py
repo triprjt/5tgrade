@@ -5,6 +5,7 @@ from grade5.models import Subject, Chapter, Module, TextField, ImageField, Video
 
 class Command(BaseCommand):
     help = 'Populates the database with fake data for testing.'
+    
 
     def handle(self, *args, **kwargs):
         fake = Faker()
@@ -29,15 +30,24 @@ class Command(BaseCommand):
                 for i in range(1, 11):
                     Chapter.objects.create(name=f'Chapter {i}', subject=subject, user=user)
 
+        url1 = "https://firebasestorage.googleapis.com/v0/b/grade5-2448a.appspot.com/o/Absolute_Reality_v16_Electricity_Energy_Current_0.jpeg?alt=media&token=3e3f7923-9ef5-4dca-9ebf-72ba5cb6d0c0"
+        url2 = "https://firebasestorage.googleapis.com/v0/b/grade5-2448a.appspot.com/o/Absolute_Reality_v16_mechanics_force_physics_engine_0.jpeg?alt=media&token=cc168092-1bb3-4900-b8c5-490c5b2ab66d"
+        url3 = "https://firebasestorage.googleapis.com/v0/b/grade5-2448a.appspot.com/o/Pixel_Art_physics_astronomy_galaxy_universe_2.jpeg?alt=media&token=35abd779-11a5-477e-859b-fec90d664a1e"
+        url4 = "https://firebasestorage.googleapis.com/v0/b/grade5-2448a.appspot.com/o/Absolute_Reality_v16_optics_Physics_Light_spectrum_fiber_0.jpeg?alt=media&token=77419465-e338-415e-899d-6cb1d3c305ed"
+        url5 = "https://firebasestorage.googleapis.com/v0/b/grade5-2448a.appspot.com/o/Pixel_Art_physics_astronomy_planets_stars_2.jpeg?alt=media&token=e6701665-90f4-48c3-9057-21bbf765f8b5"
+        video_url = "https://www.youtube.com/watch?v=ZSt9tm3RoUU"
+        image_urls = [url1, url2, url3, url4, url5]
         # Create modules for each chapter
         for chapter in Chapter.objects.all():
             for i in range(1, 11):
-                text_content = TextField.objects.create(text=fake.paragraph(nb_sentences=5), user=chapter.user)
+                text_content = TextField.objects.create(text=fake.paragraph(nb_sentences=500), user=chapter.user)
                 image_content = ImageField.objects.create(
-                    image=[fake.image_url() for _ in range(4)],
+                    image=image_urls,  
                     user=chapter.user
                 )
-                video_content = VideoField.objects.create(video=fake.url(), user=chapter.user)
+                # print(f"Video URL being inserted: {video_url}")  # debugging line
+                # self.stdout.write(self.style.SUCCESS(f"Video URL being inserted: {video_url}"))
+                video_content = VideoField.objects.create(video=video_url, user=chapter.user)
 
                 mcq_set = MCQSet.objects.create(user=chapter.user)
 
